@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Green Modern Theme */
+@layer components {
+    .btn-primary {
+        @apply bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200;
+    }
+    
+    .btn-danger {
+        @apply bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200;
+    }
+    
+    .form-input {
+        @apply block w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500 sm:text-sm;
+    }
+    
+    .form-select {
+        @apply block w-full rounded-lg border-gray-300 focus:border-green-500 focus:ring-green-500 sm:text-sm;
+    }
+    
+    .table-header {
+        @apply bg-green-600 text-white;
+    }
+    
+    .table-row-even {
+        @apply even:bg-gray-50;
+    }
+    
+    .badge-pending {
+        @apply bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full;
+    }
+    
+    .badge-approved {
+        @apply bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full;
+    }
+    
+    .badge-rejected {
+        @apply bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full;
+    }
+    
+    .navbar-green {
+        @apply bg-green-600 text-white;
+    }
+    
+    .sidebar-green {
+        @apply bg-green-600 text-white;
+    }
+    
+    .card-white {
+        @apply bg-white rounded-lg shadow-sm border border-gray-200;
+    }
+}
