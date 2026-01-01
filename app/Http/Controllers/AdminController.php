@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Report;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,6 +43,15 @@ class AdminController extends Controller
     {
         $report->update(['status' => 'approved']);
 
+        // Create notification for the report owner
+        Notification::create([
+            'user_id' => $report->user_id,
+            'report_id' => $report->id,
+            'title' => 'Laporan Disetujui',
+            'message' => "Laporan Anda dengan judul \"{$report->title}\" telah disetujui oleh admin.",
+            'type' => 'approved',
+        ]);
+
         return redirect()->back()->with('success', 'Laporan berhasil disetujui.');
     }
 
@@ -51,6 +61,15 @@ class AdminController extends Controller
     public function reject(Report $report)
     {
         $report->update(['status' => 'rejected']);
+
+        // Create notification for the report owner
+        Notification::create([
+            'user_id' => $report->user_id,
+            'report_id' => $report->id,
+            'title' => 'Laporan Ditolak',
+            'message' => "Laporan Anda dengan judul \"{$report->title}\" telah ditolak oleh admin.",
+            'type' => 'rejected',
+        ]);
 
         return redirect()->back()->with('success', 'Laporan berhasil ditolak.');
     }
@@ -62,5 +81,34 @@ class AdminController extends Controller
     {
         $report->load('user');
         return view('admin.report-detail', compact('report'));
+    }
+
+    /**
+     * Display user management dashboard
+     */
+    public function userDashboard()
+    {
+        $users = \App\Models\User::paginate(10);
+        return view('admin.dashboard-user', compact('users'));
+    }
+
+    /**
+     * Display all user feedbacks
+     */
+    public function feedbacks()
+    {
+        $feedbacks = \App\Models\Feedback::with(['user', 'report'])
+            ->latest()
+            ->paginate(15);
+        
+        return view('admin.feedbacks', compact('feedbacks'));
+    }
+
+    /**
+     * Display map with all reports
+     */
+    public function map()
+    {
+        return view('admin.map');
     }
 }

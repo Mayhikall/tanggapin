@@ -55,142 +55,7 @@
                 </div>
             @endif
 
-            <!-- Report Form Card -->
-            {{-- <div class="user-card">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-medium text-gray-900">Buat Laporan Baru</h3>
-                        <div class="flex items-center space-x-2">
-                            <svg class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                            <span class="text-sm text-gray-600">Pengaduan atau Aspirasi</span>
-                        </div>
-                    </div>
 
-                    <form action="{{ route('reports.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-                        @csrf
-                        
-                        <!-- Title and Type Row -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="title" class="block text-sm font-medium text-gray-700">Judul Laporan</label>
-                                <input type="text" name="title" id="title" 
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                                       placeholder="Masukkan judul laporan..." value="{{ old('title') }}" required>
-                                @error('title')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="type" class="block text-sm font-medium text-gray-700">Jenis Laporan</label>
-                                <select name="type" id="type" 
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" required>
-                                    <option value="">Pilih jenis laporan</option>
-                                    <option value="pengaduan" {{ old('type') == 'pengaduan' ? 'selected' : '' }}>Pengaduan</option>
-                                    <option value="aspirasi" {{ old('type') == 'aspirasi' ? 'selected' : '' }}>Aspirasi</option>
-                                </select>
-                                @error('type')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <!-- Content -->
-                        <div>
-                            <label for="content" class="block text-sm font-medium text-gray-700">Isi Laporan</label>
-                            <textarea name="content" id="content" rows="4" 
-                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                                      placeholder="Jelaskan detail laporan Anda..." required>{{ old('content') }}</textarea>
-                            @error('content')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Date and Address Row -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="date_of_incident" class="block text-sm font-medium text-gray-700">Tanggal Kejadian</label>
-                                <input type="date" name="date_of_incident" id="date_of_incident" 
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                                       value="{{ old('date_of_incident') }}" required>
-                                @error('date_of_incident')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="location_address" class="block text-sm font-medium text-gray-700">Alamat Lokasi</label>
-                                <input type="text" name="location_address" id="location_address" 
-                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                                       placeholder="Masukkan alamat lengkap..." value="{{ old('location_address') }}" required>
-                                @error('location_address')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <!-- Map Picker -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Lokasi di Peta</label>
-                            <div class="bg-gray-100 rounded-lg p-4">
-                                <div id="map" class="h-64 w-full rounded-lg"></div>
-                                <div class="mt-3 grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label for="latitude" class="block text-xs font-medium text-gray-600">Latitude</label>
-                                        <input type="text" name="latitude" id="latitude" 
-                                               class="mt-1 block w-full text-sm rounded-md border-gray-300 bg-gray-50"
-                                               value="{{ old('latitude', '-6.2088') }}" readonly required>
-                                        @error('latitude')
-                                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                    <div>
-                                        <label for="longitude" class="block text-xs font-medium text-gray-600">Longitude</label>
-                                        <input type="text" name="longitude" id="longitude" 
-                                               class="mt-1 block w-full text-sm rounded-md border-gray-300 bg-gray-50"
-                                               value="{{ old('longitude', '106.8456') }}" readonly required>
-                                        @error('longitude')
-                                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Image Upload -->
-                        <div>
-                            <label for="image" class="block text-sm font-medium text-gray-700">Gambar Pendukung (Opsional)</label>
-                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                <div class="space-y-1 text-center">
-                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                    <div class="flex text-sm text-gray-600">
-                                        <label for="image" class="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-green-500">
-                                            <span>Upload gambar</span>
-                                            <input id="image" name="image" type="file" accept="image/*" class="sr-only">
-                                        </label>
-                                        <p class="pl-1">atau drag and drop</p>
-                                    </div>
-                                    <p class="text-xs text-gray-500">PNG, JPG, JPEG hingga 2MB</p>
-                                </div>
-                            </div>
-                            @error('image')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="flex justify-end">
-                            <x-primary-button type="submit">
-                                {{ __('Kirim Laporan') }}
-                            </x-primary-button>
-                        </div>
-                    </form>
-                </div>
-            </div> --}}
 
             <!-- User Reports List -->
             <div class="user-card">
@@ -223,7 +88,7 @@
                                         <tr class="hover:bg-gray-50">
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 @if($report->image)
-                                                    <img src="{{ asset('storage/reports/' . $report->image) }}" 
+                                                    <img src="{{ asset('storage/' . $report->image) }}" 
                                                          alt="Thumbnail" 
                                                          class="h-12 w-12 rounded-lg object-cover">
                                                 @else
@@ -279,6 +144,24 @@
                                                         </svg>
                                                         Detail
                                                     </a>
+                                                    @if($report->status === 'approved')
+                                                        @if($report->feedback)
+                                                            <span class="text-yellow-600 flex items-center" title="Sudah memberikan rating">
+                                                                <svg class="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                                                </svg>
+                                                                {{ $report->feedback->rating }}/5
+                                                            </span>
+                                                        @else
+                                                            <a href="{{ route('reports.show', $report) }}" 
+                                                               class="text-gray-500 hover:text-yellow-600 flex items-center" title="Beri rating untuk laporan ini">
+                                                                <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                                                </svg>
+                                                                Rating
+                                                            </a>
+                                                        @endif
+                                                    @endif
                                                     @if($report->status === 'pending')
                                                         <a href="{{ route('reports.edit', $report) }}" 
                                                            class="text-blue-600 hover:text-blue-900 flex items-center">
@@ -287,6 +170,20 @@
                                                             </svg>
                                                             Edit
                                                         </a>
+                                                        <form action="{{ route('reports.destroy', $report) }}" 
+                                                              method="POST" 
+                                                              class="inline"
+                                                              onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan ini?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" 
+                                                                    class="text-red-600 hover:text-red-900 flex items-center">
+                                                                <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                </svg>
+                                                                Hapus
+                                                            </button>
+                                                        </form>
                                                     @endif
                                                 </div>
                                             </td>

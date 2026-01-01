@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'TangGapin') }} - User Dashboard</title>
+        <title>{{ config('app.name', 'Tanggapin') }} - User Dashboard</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -35,7 +35,7 @@
                                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
-                                <span class="text-xl font-bold text-white">TangGapin</span>
+                                <span class="text-xl font-bold text-white">Tanggapin</span>
                             </a>
                         </div>
 
@@ -56,16 +56,34 @@
                                 </svg>
                                 Buat Laporan
                             </a>
+                            <a href="{{ route('map.index') }}" 
+                               class="text-green-100 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 {{ request()->routeIs('map.index') ? 'bg-green-700 text-white' : '' }}">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Peta Aduan
+                            </a>
                         </div>
 
                         <!-- User Menu -->
                         <div class="hidden md:flex items-center space-x-4">
+                            <!-- Notification Bell -->
+                            <a href="{{ route('notifications.index') }}" class="relative text-green-100 hover:text-white p-2 rounded-lg transition-colors duration-200">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                </svg>
+                                @if(Auth::user()->unreadNotificationsCount() > 0)
+                                    <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+                                        {{ Auth::user()->unreadNotificationsCount() > 9 ? '9+' : Auth::user()->unreadNotificationsCount() }}
+                                    </span>
+                                @endif
+                            </a>
+                            
                             <div class="relative" x-data="{ open: false }">
                                 <button @click="open = !open" @click.away="open = false" 
                                         class="flex items-center space-x-2 text-green-100 hover:text-white px-3 py-2 rounded-lg transition-colors duration-200">
-                                    <div class="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center">
-                                        <span class="text-sm font-medium text-white">{{ substr(Auth::user()->name, 0, 1) }}</span>
-                                    </div>
+                                    <img src="{{ Auth::user()->getProfilePhotoUrl() }}" alt="Profile" class="w-8 h-8 rounded-full object-cover border-2 border-green-400">
                                     <span class="font-medium">{{ Auth::user()->name }}</span>
                                     <svg class="w-4 h-4 transition-transform duration-200" :class="{'rotate-180': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -136,6 +154,19 @@
                             <a href="{{ route('reports.create') }}" 
                                class="block px-3 py-2 rounded-md text-base font-medium text-green-100 hover:text-white hover:bg-green-800 transition-colors duration-200">
                                 Buat Laporan
+                            </a>
+                            <a href="{{ route('notifications.index') }}" 
+                               class="block px-3 py-2 rounded-md text-base font-medium text-green-100 hover:text-white hover:bg-green-800 transition-colors duration-200">
+                                Notifikasi
+                                @if(Auth::user()->unreadNotificationsCount() > 0)
+                                    <span class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
+                                        {{ Auth::user()->unreadNotificationsCount() }}
+                                    </span>
+                                @endif
+                            </a>
+                            <a href="{{ route('map.index') }}" 
+                               class="block px-3 py-2 rounded-md text-base font-medium text-green-100 hover:text-white hover:bg-green-800 transition-colors duration-200">
+                                Peta Aduan
                             </a>
                             <a href="{{ route('profile.edit') }}" 
                                class="block px-3 py-2 rounded-md text-base font-medium text-green-100 hover:text-white hover:bg-green-800 transition-colors duration-200">

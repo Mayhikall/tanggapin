@@ -1,4 +1,4 @@
-<x-user-layout>
+<x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-2xl font-bold text-gray-900">
@@ -163,7 +163,7 @@
                             @if($report->image)
                                 <div class="mb-4">
                                     <p class="text-sm text-gray-600 mb-2">Gambar saat ini:</p>
-                                    <img src="{{ asset('storage/reports/' . $report->image) }}" 
+                                    <img src="{{ asset('storage/' . $report->image) }}" 
                                          alt="Gambar Laporan" 
                                          class="w-32 h-32 object-cover rounded-lg border">
                                 </div>
@@ -189,15 +189,33 @@
 
                         <!-- Submit Button -->
                         @if($report->status === 'pending')
-                            <div class="flex items-center justify-end space-x-4">
-                                <a href="{{ route('reports.show', $report) }}" 
-                                   class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-lg">
-                                    Batal
-                                </a>
-                                <button type="submit" 
-                                        class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
-                                    Update Laporan
-                                </button>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <form action="{{ route('reports.destroy', $report) }}" 
+                                          method="POST" 
+                                          class="inline"
+                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan ini? Tindakan ini tidak dapat dibatalkan.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" 
+                                                class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center">
+                                            <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                            Hapus Laporan
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <a href="{{ route('reports.show', $report) }}" 
+                                       class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-lg">
+                                        Batal
+                                    </a>
+                                    <button type="submit" 
+                                            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
+                                        Update Laporan
+                                    </button>
+                                </div>
                             </div>
                         @endif
                     </form>
@@ -247,4 +265,4 @@
             });
         @endif
     </script>
-</x-user-layout>
+</x-app-layout>

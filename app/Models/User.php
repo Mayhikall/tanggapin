@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'profile_photo',
     ];
 
     /**
@@ -70,5 +71,43 @@ class User extends Authenticatable
     public function reports(): HasMany
     {
         return $this->hasMany(\App\Models\Report::class);
+    }
+
+    /**
+     * Get the notifications for the user.
+     */
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(\App\Models\Notification::class);
+    }
+
+    /**
+     * Get the feedbacks for the user.
+     */
+    public function feedbacks(): HasMany
+    {
+        return $this->hasMany(\App\Models\Feedback::class);
+    }
+
+    /**
+     * Get the profile photo URL.
+     */
+    public function getProfilePhotoUrl(): string
+    {
+        if ($this->profile_photo) {
+            return asset('storage/' . $this->profile_photo);
+        }
+        
+        // Return default avatar with user initials
+        $name = urlencode($this->name);
+        return "https://ui-avatars.com/api/?name={$name}&background=16a34a&color=fff&size=128";
+    }
+
+    /**
+     * Get unread notifications count.
+     */
+    public function unreadNotificationsCount(): int
+    {
+        return $this->notifications()->where('is_read', false)->count();
     }
 }

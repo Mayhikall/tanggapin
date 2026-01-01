@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
@@ -34,6 +35,12 @@ class ReportController extends Controller
      */
     public function store(Request $request)
     {
+        // Debug: Log incoming request
+        Log::info('Store report request received', [
+            'has_file' => $request->hasFile('image'),
+            'all_files' => $request->allFiles(),
+        ]);
+        
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|in:pengaduan,aspirasi',
@@ -42,7 +49,15 @@ class ReportController extends Controller
             'location_address' => 'required|string',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'video' => 'nullable|mimes:mp4,mov,avi|max:51200',
+        ], [
+            'image.required' => 'Gambar pendukung wajib diupload.',
+            'image.image' => 'File harus berupa gambar.',
+            'image.mimes' => 'Format gambar harus JPG, PNG, atau GIF.',
+            'image.max' => 'Ukuran gambar maksimal 2MB.',
+            'video.mimes' => 'Format video harus MP4, MOV, atau AVI.',
+            'video.max' => 'Ukuran video maksimal 50MB.',
         ]);
 
         $validated['user_id'] = Auth::id();
@@ -52,8 +67,34 @@ class ReportController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/reports', $filename);
-            $validated['image'] = $filename;
+            
+            // Debug logging
+            Log::info('Upload attempt', [
+                'filename' => $filename,
+                'original' => $file->getClientOriginalName(),
+                'size' => $file->getSize(),
+                'mime' => $file->getMimeType()
+            ]);
+            
+            // Store file di storage/app/public/reports
+            $path = $file->storeAs('reports', $filename, 'public');
+            
+            Log::info('Upload result', [
+                'path' => $path,
+                'full_path' => storage_path('app/public/' . $path),
+                'exists' => Storage::disk('public')->exists($path)
+            ]);
+            
+            // Simpan path lengkap: reports/namagambar.jpg
+            $validated['image'] = $path;
+        }
+
+        // Handle video upload
+        if ($request->hasFile('video')) {
+            $videoFile = $request->file('video');
+            $videoFilename = time() . '_video_' . $videoFile->getClientOriginalName();
+            $videoPath = $videoFile->storeAs('reports/videos', $videoFilename, 'public');
+            $validated['video'] = $videoPath;
         }
 
         $report = Report::create($validated);
@@ -111,19 +152,40 @@ class ReportController extends Controller
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'video' => 'nullable|mimes:mp4,mov,avi|max:51200',
+        ], [
+            'video.mimes' => 'Format video harus MP4, MOV, atau AVI.',
+            'video.max' => 'Ukuran video maksimal 50MB.',
         ]);
 
         // Handle image upload
         if ($request->hasFile('image')) {
             // Delete old image if exists
             if ($report->image) {
-                Storage::delete('public/reports/' . $report->image);
+                Storage::disk('public')->delete($report->image);
             }
 
             $file = $request->file('image');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/reports', $filename);
-            $validated['image'] = $filename;
+            
+            // Store file di storage/app/public/reports
+            $path = $file->storeAs('reports', $filename, 'public');
+            
+            // Simpan path lengkap: reports/namagambar.jpg
+            $validated['image'] = $path;
+        }
+
+        // Handle video upload
+        if ($request->hasFile('video')) {
+            // Delete old video if exists
+            if ($report->video) {
+                Storage::disk('public')->delete($report->video);
+            }
+
+            $videoFile = $request->file('video');
+            $videoFilename = time() . '_video_' . $videoFile->getClientOriginalName();
+            $videoPath = $videoFile->storeAs('reports/videos', $videoFilename, 'public');
+            $validated['video'] = $videoPath;
         }
 
         $report->update($validated);
@@ -148,7 +210,7 @@ class ReportController extends Controller
 
         // Delete image if exists
         if ($report->image) {
-            Storage::delete('public/reports/' . $report->image);
+            Storage::disk('public')->delete($report->image);
         }
 
         $report->delete();

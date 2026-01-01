@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Report extends Model
 {
@@ -21,6 +22,7 @@ class Report extends Model
         'type',
         'content',
         'image',
+        'video',
         'date_of_incident',
         'location_address',
         'latitude',
@@ -88,5 +90,21 @@ class Report extends Model
     public function isAspirasi(): bool
     {
         return $this->type === 'aspirasi';
+    }
+
+    /**
+     * Get the feedback for the report.
+     */
+    public function feedback(): HasOne
+    {
+        return $this->hasOne(Feedback::class);
+    }
+
+    /**
+     * Check if report has feedback from the owner
+     */
+    public function hasFeedback(): bool
+    {
+        return $this->feedback()->exists();
     }
 }

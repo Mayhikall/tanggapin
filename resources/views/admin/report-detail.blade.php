@@ -1,182 +1,229 @@
 <x-admin-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-gray-900">
-                Detail Laporan - Admin View
+        <div class="flex items-center justify-between w-full">
+            <h1 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
+                Detail Laporan
             </h1>
-            <a href="{{ route('admin.dashboard') }}" class="text-green-600 hover:text-green-700 flex items-center">
-                <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            <a href="{{ route('admin.dashboard') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium inline-flex items-center transition-colors duration-200">
+                Kembali
+                <svg class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
-                Kembali ke Dashboard Admin
             </a>
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <!-- Success Message -->
-            @if(session('success'))
-                <div class="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
-                        </div>
+    <div class="space-y-6">
+        <!-- Success Message -->
+        @if(session('success'))
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
                     </div>
                 </div>
-            @endif
+            </div>
+        @endif
 
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-                <div class="p-6">
-                    <!-- Header -->
-                    <div class="flex items-center justify-between mb-6">
-                        <div>
-                            <h1 class="text-2xl font-bold text-gray-900">{{ $report->title }}</h1>
-                            <div class="flex items-center mt-2 space-x-4">
-                                @if($report->type == 'pengaduan')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                                        Pengaduan
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                        Aspirasi
-                                    </span>
-                                @endif
-                                <x-status-badge :status="$report->status" />
-                            </div>
+        <!-- Header Card -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="p-6">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ $report->title }}</h1>
+                        <div class="flex items-center mt-3 space-x-3">
+                            @if($report->type == 'pengaduan')
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                                    Pengaduan
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    Aspirasi
+                                </span>
+                            @endif
+                            <x-status-badge :status="$report->status" />
                         </div>
-                        
-                        <!-- Admin Actions -->
-                        @if($report->status === 'pending')
-                            <div class="flex space-x-2">
-                                <form action="{{ route('admin.approve', $report) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" 
-                                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium inline-flex items-center"
-                                            onclick="return confirm('Yakin ingin menyetujui laporan ini?')">
-                                        <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                        </svg>
-                                        Approve
-                                    </button>
-                                </form>
-
-                                <form action="{{ route('admin.reject', $report) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" 
-                                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium inline-flex items-center"
-                                            onclick="return confirm('Yakin ingin menolak laporan ini?')">
-                                        <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                        </svg>
-                                        Reject
-                                    </button>
-                                </form>
-                            </div>
-                        @endif
                     </div>
+                    
+                    <!-- Admin Actions -->
+                    @if($report->status === 'pending')
+                        <div class="flex space-x-3">
+                            <form action="{{ route('admin.approve', $report) }}" method="POST" class="inline">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" 
+                                        class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold inline-flex items-center shadow-md transition-colors duration-200"
+                                        onclick="return confirm('Yakin ingin menyetujui laporan ini?')">
+                                    <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    Approve
+                                </button>
+                            </form>
 
-                    <!-- Content -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Main Content -->
-                        <div class="lg:col-span-2 space-y-6">
-                            <!-- Description -->
+                            <form action="{{ route('admin.reject', $report) }}" method="POST" class="inline">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" 
+                                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold inline-flex items-center shadow-md transition-colors duration-200"
+                                        onclick="return confirm('Yakin ingin menolak laporan ini?')">
+                                    <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                    Reject
+                                </button>
+                            </form>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <!-- Main Content - Left Side -->
+            <div class="xl:col-span-2 space-y-6">
+                <!-- Description -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Deskripsi</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-700 whitespace-pre-line leading-relaxed">{{ $report->content }}</p>
+                    </div>
+                </div>
+
+                <!-- Image -->
+                @if($report->image)
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900">Gambar Pendukung</h3>
+                        </div>
+                        <div class="p-6">
+                            <img src="{{ asset('storage/' . $report->image) }}" 
+                                 alt="Gambar Laporan" 
+                                 class="w-full max-w-2xl h-auto rounded-lg shadow-lg">
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Video -->
+                @if($report->video)
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900">Video Pendukung</h3>
+                        </div>
+                        <div class="p-6">
+                            @php
+                                $videoPath = $report->video;
+                                $videoUrl = asset('storage/' . implode('/', array_map('rawurlencode', explode('/', $videoPath))));
+                            @endphp
+                            <video controls class="w-full max-w-2xl rounded-lg shadow-lg">
+                                <source src="{{ $videoUrl }}" type="video/mp4">
+                                Browser Anda tidak mendukung video tag.
+                            </video>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Map -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Lokasi</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-600 mb-4">{{ $report->location_address }}</p>
+                        <div id="admin-map" class="h-72 w-full rounded-lg border border-gray-200"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar - Right Side -->
+            <div class="space-y-6">
+                <!-- User Information -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+                        <h3 class="text-lg font-semibold text-white">Informasi Pelapor</h3>
+                    </div>
+                    <div class="p-6">
+                        <dl class="space-y-4">
                             <div>
-                                <h3 class="text-lg font-medium text-gray-900 mb-3">Deskripsi</h3>
-                                <div class="bg-gray-50 rounded-lg p-4">
-                                    <p class="text-gray-700 whitespace-pre-line">{{ $report->content }}</p>
-                                </div>
+                                <dt class="text-sm font-medium text-gray-500">Nama</dt>
+                                <dd class="text-base font-semibold text-gray-900 mt-1">{{ $report->user->name }}</dd>
                             </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Email</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ $report->user->email }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Role</dt>
+                                <dd class="mt-1">
+                                    @if($report->user->role === 'admin')
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            Administrator
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            User
+                                        </span>
+                                    @endif
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
 
-                            <!-- Image -->
-                            @if($report->image)
+                <!-- Report Details -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="bg-gradient-to-r from-gray-700 to-gray-800 px-6 py-4">
+                        <h3 class="text-lg font-semibold text-white">Detail Laporan</h3>
+                    </div>
+                    <div class="p-6">
+                        <dl class="space-y-4">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Tanggal Kejadian</dt>
+                                <dd class="text-sm font-semibold text-gray-900 mt-1">{{ $report->date_of_incident->format('d F Y') }}</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Tanggal Dibuat</dt>
+                                <dd class="text-sm text-gray-900 mt-1">{{ $report->created_at->format('d F Y, H:i') }}</dd>
+                            </div>
+                            @if($report->updated_at->ne($report->created_at))
                                 <div>
-                                    <h3 class="text-lg font-medium text-gray-900 mb-3">Gambar Pendukung</h3>
-                                    <div class="bg-gray-50 rounded-lg p-4">
-                                        <img src="{{ asset('storage/reports/' . $report->image) }}" 
-                                             alt="Gambar Laporan" 
-                                             class="max-w-full h-auto rounded-lg shadow-lg">
-                                    </div>
+                                    <dt class="text-sm font-medium text-gray-500">Terakhir Diupdate</dt>
+                                    <dd class="text-sm text-gray-900 mt-1">{{ $report->updated_at->format('d F Y, H:i') }}</dd>
                                 </div>
                             @endif
-
-                            <!-- Map -->
                             <div>
-                                <h3 class="text-lg font-medium text-gray-900 mb-3">Lokasi</h3>
-                                <div class="bg-gray-50 rounded-lg p-4">
-                                    <p class="text-sm text-gray-600 mb-3">{{ $report->location_address }}</p>
-                                    <div id="admin-map" class="h-64 w-full rounded-lg"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sidebar -->
-                        <div class="space-y-6">
-                            <!-- User Information -->
-                            <div class="bg-blue-50 rounded-lg p-4">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Informasi Pelapor</h3>
-                                <dl class="space-y-3">
-                                    <div>
-                                        <dt class="text-sm font-medium text-gray-500">Nama</dt>
-                                        <dd class="text-sm text-gray-900">{{ $report->user->name }}</dd>
-                                    </div>
-                                    <div>
-                                        <dt class="text-sm font-medium text-gray-500">Email</dt>
-                                        <dd class="text-sm text-gray-900">{{ $report->user->email }}</dd>
-                                    </div>
-                                    <div>
-                                        <dt class="text-sm font-medium text-gray-500">Role</dt>
-                                        <dd class="text-sm text-gray-900">{{ ucfirst($report->user->role) }}</dd>
-                                    </div>
-                                </dl>
-                            </div>
-
-                            <!-- Report Details -->
-                            <div class="bg-gray-50 rounded-lg p-4">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Detail Laporan</h3>
-                                <dl class="space-y-3">
-                                    <div>
-                                        <dt class="text-sm font-medium text-gray-500">Tanggal Kejadian</dt>
-                                        <dd class="text-sm text-gray-900">{{ $report->date_of_incident->format('d F Y') }}</dd>
-                                    </div>
-                                    <div>
-                                        <dt class="text-sm font-medium text-gray-500">Tanggal Dibuat</dt>
-                                        <dd class="text-sm text-gray-900">{{ $report->created_at->format('d F Y, H:i') }}</dd>
-                                    </div>
-                                    @if($report->updated_at->ne($report->created_at))
-                                        <div>
-                                            <dt class="text-sm font-medium text-gray-500">Terakhir Diupdate</dt>
-                                            <dd class="text-sm text-gray-900">{{ $report->updated_at->format('d F Y, H:i') }}</dd>
-                                        </div>
+                                <dt class="text-sm font-medium text-gray-500">Status</dt>
+                                <dd class="mt-1">
+                                    @if($report->status === 'pending')
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            Menunggu Review
+                                        </span>
+                                    @elseif($report->status === 'approved')
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            Disetujui
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            Ditolak
+                                        </span>
                                     @endif
-                                    <div>
-                                        <dt class="text-sm font-medium text-gray-500">Status</dt>
-                                        <dd class="text-sm text-gray-900">
-                                            @if($report->status === 'pending')
-                                                <span class="text-yellow-600">Menunggu Review</span>
-                                            @elseif($report->status === 'approved')
-                                                <span class="text-green-600">Disetujui</span>
-                                            @else
-                                                <span class="text-red-600">Ditolak</span>
-                                            @endif
-                                        </dd>
-                                    </div>
-                                    <div>
-                                        <dt class="text-sm font-medium text-gray-500">Koordinat</dt>
-                                        <dd class="text-xs text-gray-700">
-                                            {{ number_format($report->latitude, 6) }}, {{ number_format($report->longitude, 6) }}
-                                        </dd>
-                                    </div>
-                                </dl>
+                                </dd>
                             </div>
-                        </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Koordinat</dt>
+                                <dd class="text-xs font-mono text-gray-700 mt-1 bg-gray-100 px-2 py-1 rounded">
+                                    {{ number_format($report->latitude, 6) }}, {{ number_format($report->longitude, 6) }}
+                                </dd>
+                            </div>
+                        </dl>
                     </div>
                 </div>
             </div>

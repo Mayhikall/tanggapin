@@ -28,16 +28,17 @@
         @apply even:bg-gray-50;
     }
     
+    /* Updated badge styles with better contrast */
     .badge-pending {
-        @apply bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full;
+        @apply bg-yellow-100 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full border border-yellow-300;
     }
     
     .badge-approved {
-        @apply bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full;
+        @apply bg-green-100 text-green-900 text-xs font-bold px-3 py-1 rounded-full border border-green-300;
     }
     
     .badge-rejected {
-        @apply bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full;
+        @apply bg-red-100 text-red-900 text-xs font-bold px-3 py-1 rounded-full border border-red-300;
     }
     
     .navbar-green {
@@ -50,5 +51,30 @@
     
     .card-white {
         @apply bg-white rounded-lg shadow-sm border border-gray-200;
+    }
+    
+    /* Admin Panel Specific Styles */
+    .admin-stat-card-blue {
+        @apply bg-blue-50 border-2 border-blue-200 p-4 rounded-lg shadow-md;
+    }
+    
+    .admin-stat-card-yellow {
+        @apply bg-yellow-50 border-2 border-yellow-300 p-4 rounded-lg shadow-md;
+    }
+    
+    .admin-stat-card-green {
+        @apply bg-green-50 border-2 border-green-200 p-4 rounded-lg shadow-md;
+    }
+    
+    .admin-stat-card-red {
+        @apply bg-red-50 border-2 border-red-200 p-4 rounded-lg shadow-md;
+    }
+    
+    .admin-sidebar-text {
+        @apply text-white font-semibold;
+    }
+    
+    .admin-sidebar-section {
+        @apply text-xs font-semibold text-white uppercase tracking-wider;
     }
 }
